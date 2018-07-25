@@ -58,9 +58,7 @@ SET(ZLIB_SYSTEM TRUE CACHE BOOL "Default ZLIB installation type")
 # --- PATH ---
 
 set(${CMAKE_CURRENT_SOURCE_DIR} ..)
-set(SRC_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src")
-set(EXAMPLES_PATH "${CMAKE_CURRENT_SOURCE_DIR}/examples")
-set(PLUGIN_EXAMPLES_PATH "${CMAKE_CURRENT_SOURCE_DIR}/plugin_examples")
+set(CONTROLLER_SRC_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src/controller")
 
 if (CMAKE_BUILD_TYPE STREQUAL "Release")
     set(OUTPUT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/bin/release")
@@ -267,14 +265,12 @@ set(KIH_INCLUDE_DIR
 
 # --- BUILD ---
 
-# Build hello world example
-file(GLOB hello_world_example_path "${EXAMPLES_PATH}/hello_world_example.c")
-get_filename_component(hello_world_example ${hello_world_example_path} NAME_WE)
-add_executable(${hello_world_example} ${hello_world_example_path})
+# Build controller
+file(GLOB_RECURSE PROGRAM_TARGET_SRC_FILES "${CONTROLLER_SRC_PATH}/*.*")
+add_executable(controller ${PROGRAM_TARGET_SRC_FILES})
 if (KIH_DEPENDENCIES)
-    add_dependencies(${executableName} ${KIH_DEPENDENCIES})
+    add_dependencies(controller ${KIH_DEPENDENCIES})
 endif ()
-target_link_libraries(${hello_world_example} ${PROJECT_NAME_STATIC})
-target_include_directories(${hello_world_example} PUBLIC ${KIH_INCLUDE_DIR})
-target_link_libraries(${hello_world_example} ${KIH_LIBRARIES})
-set_target_properties(${hello_world_example} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${EXAMPLES_OUTPUT_PATH})
+target_include_directories(controller PUBLIC ${KIH_INCLUDE_DIR})
+target_link_libraries(controller ${KIH_LIBRARIES})
+set_target_properties(controller PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_PATH})
