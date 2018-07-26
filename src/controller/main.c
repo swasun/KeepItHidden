@@ -36,8 +36,8 @@
 int main(int argc, char **argv) {
     int algorithm_plugin_id, constant_plugin_id;
     mp_memory_plugin *algorithm_plugin, *constant_plugin;
-    typedef (unsigned char *)(*algorithm_func)(double, size_t *);
-    typedef (double)(*get_constant_func)();
+    typedef (unsigned char *)(*algorithm_func)(int, size_t *);
+    typedef (int)(*get_constant_func)();
     algorithm_func algorithm;
     get_constant_func get_constant;
     uecm_crypto_metadata *plugin_crypto_metadata;
