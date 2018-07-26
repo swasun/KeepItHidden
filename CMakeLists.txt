@@ -24,26 +24,6 @@
  #   SOFTWARE.                                                                       #
  #####################################################################################
 
-﻿ ##########################################################################################
- # Copyright (C) 2018 by Charly Lamothe                                                   #
- #                                                                                        #
- # This file is part of KeepItHidden.                                                     #
- #                                                                                        #
- #   KeepItHidden is free software: you can redistribute it and/or modify                 #
- #   it under the terms of the GNU General Public License as published by                 #
- #   the Free Software Foundation, either version 3 of the License, or                    #
- #   (at your option) any later version.                                                  #
- #                                                                                        #
- #   KeepItHidden is distributed in the hope that it will be useful,                      #
- #   but WITHOUT ANY WARRANTY; without even the implied warranty of                       #
- #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                        #
- #   GNU General Public License for more details.                                         #
- #                                                                                        #
- #   You should have received a copy of the GNU General Public License                    #
- #   along with KeepItHidden.  If not, see <http://www.gnu.org/licenses/>.                #
- ##########################################################################################
-
-
 # --- PROJECT ---
 
 PROJECT(kih C)
@@ -85,6 +65,7 @@ SET(ZLIB_SYSTEM TRUE CACHE BOOL "Default ZLIB installation type")
 
 set(${CMAKE_CURRENT_SOURCE_DIR} ..)
 set(CONTROLLER_SRC_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src/controller")
+set(INITIALIZER_SRC_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src/initializer")
 
 if (CMAKE_BUILD_TYPE STREQUAL "Release")
     set(OUTPUT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/bin/release")
@@ -300,3 +281,13 @@ endif ()
 target_include_directories(controller PUBLIC ${KIH_INCLUDE_DIR})
 target_link_libraries(controller ${KIH_LIBRARIES})
 set_target_properties(controller PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_PATH})
+
+# Build initializer
+file(GLOB_RECURSE PROGRAM_TARGET_SRC_FILES "${INITIALIZER_SRC_PATH}/*.*")
+add_executable(initializer ${PROGRAM_TARGET_SRC_FILES})
+if (KIH_DEPENDENCIES)
+    add_dependencies(initializer ${KIH_DEPENDENCIES})
+endif ()
+target_include_directories(initializer PUBLIC ${KIH_INCLUDE_DIR})
+target_link_libraries(initializer ${KIH_LIBRARIES})
+set_target_properties(initializer PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_PATH})

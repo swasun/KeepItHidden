@@ -33,14 +33,8 @@
 #include <stdlib.h>
 #include <stddef.h>
 
-#define ALGORITHM_PLUGIN_ID 100
-#define CONSTANT_PLUGIN_ID 101
-
-static void print_usage(const char *program_name) {
-    fprintf(stdout, "Usage: %s <crypto_metadata_directory> <crypto_metadata_uid> <crypto_metadata_password>", program_name);
-}
-
 int main(int argc, char **argv) {
+    int algorithm_plugin_id, constant_plugin_id;
     mp_memory_plugin *algorithm_plugin, *constant_plugin;
     typedef (unsigned char *)(*algorithm_func)(double, size_t *);
     typedef (double)(*get_constant_func)();
@@ -50,9 +44,9 @@ int main(int argc, char **argv) {
     unsigned char *result;
     size_t result_size;
 
-    if (argc != 4) {
+    if (argc != 6) {
         fprintf(stderr, "[FATAL] Invalid arguments number");
-        print_usage(argv[0]);
+        fprintf(stdout, "Usage: %s <algorithm_plugin_id> <constant_plugin_id> <crypto_metadata_directory> <crypto_metadata_uid> <crypto_metadata_password>", argv[0]);
         exit(EXIT_FAILURE);
     }
 
@@ -64,6 +58,8 @@ int main(int argc, char **argv) {
     plugin_crypto_metadata = NULL;
     result = NULL;
     result_size = 0;
+    algorithm_plugin_id = atoi(argv[1]);
+    constant_plugin_id = atoi(argv[2]);
 
     ei_logger_info("Initializing LibUnknownEchoCryptoModule...");
     if (!uecm_init()) {
@@ -78,7 +74,7 @@ int main(int argc, char **argv) {
     }
 
     if (!uecm_crypto_metadata_read(plugin_crypto_metadata,
-        argv[1], argv[2], argv[3])) {
+        argv[3], argv[4], argv[5])) {
 
         ei_stacktrace_push_msg("Failed to read crypto metadata");
         goto clean_up;
