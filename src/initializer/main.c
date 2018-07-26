@@ -39,8 +39,8 @@ int main(int argc, char **argv) {
     int plugin_id;
     uecm_crypto_metadata *plugin_crypto_metadata;
 
-    if (argc != 3) {
-        fprintf(stderr, "Usage: %s <plugin_source_path> <target_path>\n", argv[0]);
+    if (argc != 6) {
+        fprintf(stderr, "Usage: %s <plugin_source_path> <target_path> <crypto_metadata_directory> <crypto_metadata_uid> <crypto_metadata_password>\n", argv[0]);
         exit(EXIT_FAILURE);
     }
 
@@ -73,13 +73,24 @@ int main(int argc, char **argv) {
     entry = mp_entry_create();
     mp_entry_add_file(entry, argv[1]);
 
-    if ((plugin_crypto_metadata = uecm_crypto_metadata_create_default()) == NULL) {
-        ei_stacktrace_push_msg("Failed to create random crypto metadata");
-        goto clean_up;
-    }
-    if (!uecm_crypto_metadata_write(plugin_crypto_metadata, "metadata", "uid", "password")) {
-        ei_stacktrace_push_msg("Failed to write crypto metadata");
-        goto clean_up;
+    if (ueum_is_dir_exists(argv[3])) {
+        if ((plugin_crypto_metadata = uecm_crypto_metadata_create_empty()) == NULL) {
+            ei_stacktrace_push_msg("Failed to create empty crypto metadata");
+            goto clean_up;
+        }
+        if (!uecm_crypto_metadata_read(read_crypto_metadata, argv[3], argv[4], argv[5])) {
+            ei_stacktrace_push_msg("Failed to read our crypto metadata");
+            goto clean_up;
+        }
+    } else {
+        if ((plugin_crypto_metadata = uecm_crypto_metadata_create_default()) == NULL) {
+            ei_stacktrace_push_msg("Failed to create random crypto metadata");
+            goto clean_up;
+        }
+        if (!uecm_crypto_metadata_write(plugin_crypto_metadata, argv[3], argv[4], argv[5])) {
+            ei_stacktrace_push_msg("Failed to write crypto metadata");
+            goto clean_up;
+        }
     }
 
     /* Create new plugin from buffer */
